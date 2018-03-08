@@ -28,6 +28,7 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+//prova
 public class MainActivity extends AppCompatActivity
          implements PopularMovieAdapter.PopularMovieAdapterOnClickHandler,
                     LoaderManager.LoaderCallbacks<MovieItem[]> {
