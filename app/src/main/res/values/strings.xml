@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="popular_menu">Popular</string>
+    <string name="topRated_menu">Top Rated</string>
+    <string name="transition_string">simple_transition_code_22</string>
+    <string name="poster_image">Poster Image</string>
+    <string name="poster_image_description">poster image</string>
+
+
+</resources>

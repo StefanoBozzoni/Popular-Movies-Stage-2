@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_movie_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/margin16dp"
+    android:paddingLeft="@dimen/margin16dp"
+    android:paddingRight="@dimen/margin16dp"
+    android:paddingTop="@dimen/margin16dp"
+    tools:context=".MovieDetailActivity">
+
+    <LinearLayout
+            android:id="@+id/scrollViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/detaillayout"
+            android:orientation  ="horizontal"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/min_landscape_img_height"
+            android:layout_width ="match_parent">
+
+            <ImageView
+                android:id="@+id/moviePoster"
+                android:layout_width="@dimen/nulldp"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/margin16dp"
+                android:layout_marginRight="@dimen/margin16dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/poster_image_description"
+                android:transitionName="@string/transition_string" tools:targetApi="21"/>
+                <include layout="@layout/rightpane_layout" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/overview_tv"
+            android:textSize="@dimen/size16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin16dp" />
+    </LinearLayout>
+
+
+
+</ScrollView>

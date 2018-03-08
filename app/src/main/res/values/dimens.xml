@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin16dp">16dp</dimen>
+    <dimen name="size22dp">22sp</dimen>
+    <dimen name="size30sp">30sp</dimen>
+    <dimen name="nulldp">0dp</dimen>
+    <dimen name="margin2dp">2dp</dimen>
+    <dimen name="size16dp">16sp</dimen>
+    <dimen name="min_landscape_img_height">150dp</dimen>
+</resources>
