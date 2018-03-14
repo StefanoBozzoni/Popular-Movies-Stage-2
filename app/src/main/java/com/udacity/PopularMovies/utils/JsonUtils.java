@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.udacity.PopularMovies.BuildConfig;
 import com.udacity.PopularMovies.model.MovieItem;
+import com.udacity.PopularMovies.model.ReviewItem;
+import com.udacity.PopularMovies.model.TrailerItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +67,7 @@ public class JsonUtils {
      */
     public static URL buildUrl(String movieDbQuery) {
         Uri builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                .appendPath(movieDbQuery)
+                .appendEncodedPath(movieDbQuery)
                 .appendQueryParameter(PARAM_QUERY, API_KEY)
                 .build();
 
@@ -112,6 +114,62 @@ public class JsonUtils {
             return null;
         }
     }
+
+
+    public static ReviewItem[] parseReviewsJson(String json) {
+        try {
+            JSONObject myJson        = new JSONObject(json);
+            JSONArray arrayJsonRoot  = myJson.getJSONArray("results");
+            int num_records=arrayJsonRoot.length();
+
+            ReviewItem[] reviews = new ReviewItem[num_records];
+            for (int i=0;i<num_records;i++) {
+                JSONObject aReviewItem    = arrayJsonRoot.getJSONObject(i);
+                String id                 = getJsonString(aReviewItem  ,ReviewItem.id_Json);
+                String author             = getJsonString(aReviewItem  ,ReviewItem.author_Json);
+                String content            = getJsonString(aReviewItem  ,ReviewItem.content_Json);
+                String url                = getJsonString(aReviewItem  ,ReviewItem.url_Json);
+                reviews[i] = new ReviewItem(id,author,content,url);
+            }
+            return reviews;
+        }
+        catch (JSONException e) {
+            Log.d(TAG,"Couldn't parse Json Reviews Object:"+json);
+            //e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static TrailerItem[] parseTrailersJson(String json) {
+        try {
+
+            JSONObject myJson        = new JSONObject(json);
+            JSONArray arrayJsonRoot  = myJson.getJSONArray("results");
+            int num_records=arrayJsonRoot.length();
+
+            TrailerItem[] trailers = new TrailerItem[num_records];
+            for (int i=0;i<num_records;i++) {
+                JSONObject aTrailerItem     = arrayJsonRoot.getJSONObject(i);
+                String id              = getJsonString(aTrailerItem  ,TrailerItem.id_Json);
+                String iso6391         = getJsonString(aTrailerItem  ,TrailerItem.iso6391_Json);
+                String iso31661        = getJsonString(aTrailerItem  ,TrailerItem.iso31661_Json);
+                String key             = getJsonString(aTrailerItem  ,TrailerItem.key_Json);
+                String name            = getJsonString(aTrailerItem  ,TrailerItem.name_Json);
+                String site            = getJsonString(aTrailerItem  ,TrailerItem.site_Json);
+                int    size            = getJsonInt(aTrailerItem     ,TrailerItem.size_Json);
+                String type            = getJsonString(aTrailerItem  ,TrailerItem.type_Json);
+
+                trailers[i] = new TrailerItem(id,iso6391,iso31661,key,name,site,size,type);
+            }
+            return trailers;
+        }
+        catch (JSONException e) {
+            Log.d(TAG,"Couldn't parse Json Reviews Object:"+json);
+            //e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public static String getJsonString(JSONObject pJson,String propertyName) throws JSONException  {
         return pJson.getString(propertyName);

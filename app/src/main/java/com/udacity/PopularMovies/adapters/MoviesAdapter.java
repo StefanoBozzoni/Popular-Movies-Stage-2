@@ -1,19 +1,19 @@
-package com.udacity.PopularMovies;
+package com.udacity.PopularMovies.adapters;
 
 import android.content.Context;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
+import com.udacity.PopularMovies.R;
 import com.udacity.PopularMovies.model.MovieItem;
 import com.udacity.PopularMovies.utils.JsonUtils;
 
-import java.net.URL;
-
-public class PopularMovieAdapter extends MyRecyclerView.Adapter<PopularMovieAdapter.PMViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.PMViewHolder> {
 
     private MovieItem[] moviesData;
     private Context rcContext;
@@ -23,12 +23,12 @@ public class PopularMovieAdapter extends MyRecyclerView.Adapter<PopularMovieAdap
         void onClick(View v, MovieItem aMovie);
     }
 
-    public PopularMovieAdapter(PopularMovieAdapterOnClickHandler clickHandler) {
+    public MoviesAdapter(PopularMovieAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
 
-    public class PMViewHolder extends    MyRecyclerView.ViewHolder
+    public class PMViewHolder extends RecyclerView.ViewHolder
                               implements View.OnClickListener,
                                          View.OnLongClickListener   {
 
@@ -41,7 +41,6 @@ public class PopularMovieAdapter extends MyRecyclerView.Adapter<PopularMovieAdap
             view.setOnClickListener(this);
             view.setOnLongClickListener(this);
         }
-
 
         @Override
         public void onClick(View v) {

@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.udacity.PopularMovies.adapters.MoviesAdapter;
 import com.udacity.PopularMovies.model.MovieItem;
 import com.udacity.PopularMovies.utils.JsonUtils;
 import java.net.URL;
@@ -30,10 +31,10 @@ import butterknife.ButterKnife;
 
 //prova
 public class MainActivity extends AppCompatActivity
-         implements PopularMovieAdapter.PopularMovieAdapterOnClickHandler,
+         implements MoviesAdapter.PopularMovieAdapterOnClickHandler,
                     LoaderManager.LoaderCallbacks<MovieItem[]> {
 
-    private PopularMovieAdapter mPopularMovieAdapter;
+    private MoviesAdapter mMoviesAdapter;
     private Parcelable mRecyclerViewState;
     @BindView(R.id.movies_rv)   MyRecyclerView myRecyclerView;
     @BindView(R.id.progressBar) ProgressBar myProgressBar;
@@ -55,15 +56,10 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         mRecyclerViewState=myRecyclerView.onSaveInstanceState();
         outState.putParcelable(RECYCLER_VIEW_STATE,mRecyclerViewState);
+
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
-        mRecyclerViewState=savedInstanceState.getParcelable(RECYCLER_VIEW_STATE);
-        myRecyclerView.onRestoreInstanceState(mRecyclerViewState);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +91,6 @@ public class MainActivity extends AppCompatActivity
             queryBundle.putString(SEARCH_QUERY_URL_EXTRA, convertMenuTagToQueryTag(current_Tag_filter)); //restore loader with last used filter
         }
 
-        mPopularMovieAdapter = new PopularMovieAdapter(this);
-        myRecyclerView.setAdapter(mPopularMovieAdapter); /* Setting the adapter attaches it to the RecyclerView in our layout. */
 
         LoaderManager loaderManager = getSupportLoaderManager();
         loaderManager.initLoader(MOVIEDB_SEARCH_LOADER_ID, queryBundle, MainActivity.this);
@@ -169,7 +163,9 @@ public class MainActivity extends AppCompatActivity
 
         if (movies!=null) {
             //doesn't need anymore : myRecyclerView.restoreScrollPosition();
-            mPopularMovieAdapter.setMoviesData(movies);
+            mMoviesAdapter = new MoviesAdapter(this);
+            myRecyclerView.setAdapter(mMoviesAdapter); /* Setting the adapter attaches it to the RecyclerView in our layout. */
+            mMoviesAdapter.setMoviesData(movies);
         }
     }
 
@@ -222,7 +218,7 @@ public class MainActivity extends AppCompatActivity
                 queryBundle.putString(SEARCH_QUERY_URL_EXTRA, MOST_POPULAR_QUERY_TAG);
                 ShowActiveMenuItem(mMenu,getString(R.string.popular_menu));
             }
-            mPopularMovieAdapter.setMoviesData(null);
+            mMoviesAdapter.setMoviesData(null);
             loaderManager.restartLoader(MOVIEDB_SEARCH_LOADER_ID, queryBundle, MainActivity.this);
         }
         return super.onOptionsItemSelected(item);
@@ -246,5 +242,6 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putString(MENU_FILTER_TAG, menuActivated).apply();
     }
+
 
 }
