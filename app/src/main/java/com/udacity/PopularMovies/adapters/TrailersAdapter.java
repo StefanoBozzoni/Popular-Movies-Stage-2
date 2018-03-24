@@ -5,26 +5,36 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.udacity.PopularMovies.R;
+import com.udacity.PopularMovies.model.ReviewItem;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.udacity.PopularMovies.R;
-import com.udacity.PopularMovies.model.ReviewItem;
+import com.udacity.PopularMovies.model.TrailerItem;
 
 
-public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
+public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHolder> {
 
-    ReviewItem[] mReviewsData;
+    TrailerItem[] mTrailersData;
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final TextView content_tv;
+        public final TextView name_tv;
 
         public ViewHolder(View view) {
             super(view);
-            content_tv = (TextView) view.findViewById(R.id.content_tv);
+            name_tv = (TextView) view.findViewById(R.id.content_tv);
             //(TextView) view.findViewById(R.id.content_tv);
             //view.setOnClickListener(this);
             //view.setOnLongClickListener(this);
@@ -42,23 +52,23 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if ((holder != null) && (getItemCount() != 0)) {
-            String content=mReviewsData[position].getContent();
+            String content=mTrailersData[position].getName();
             if (content.length()>90) content=content.substring(0,90);
 
-            holder.content_tv.setText(content+"...");
+            holder.name_tv.setText(content+"...");
         }
     }
 
     @Override
     public int getItemCount() {
         int len = 0;
-        if (mReviewsData != null)
-            len = mReviewsData.length;
+        if (mTrailersData != null)
+            len = mTrailersData.length;
         return len;
     }
 
-    public void setReviewsData(ReviewItem[] reviews) {
-        mReviewsData = reviews;
+    public void setTrailersData(TrailerItem[] trailer) {
+        mTrailersData = trailer;
         notifyDataSetChanged();
     }
 

@@ -15,6 +15,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private Menu mMenu;
     private boolean appIsLaunched;
+    private Toolbar mTopToolbar;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -68,6 +70,10 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState!=null)
            mRecyclerViewState=savedInstanceState.getParcelable(RECYCLER_VIEW_STATE);
         setContentView(R.layout.activity_main);
+
+        //mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //setSupportActionBar(mTopToolbar);
+
         ButterKnife.bind(this);
 
         int orientation=this.getResources().getConfiguration().orientation;

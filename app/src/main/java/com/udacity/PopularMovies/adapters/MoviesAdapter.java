@@ -74,9 +74,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.PMViewHold
     @Override
     public void onBindViewHolder(PMViewHolder holder, int position) {
         //Get the data[position] and load it in the viewholder
-        if ((getItemCount()!=0) && (!moviesData[position].equals(""))) {
+        if ((getItemCount()!=0) && (moviesData[position].getId()!=0)) {
             //example uri : http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
-            String url = JsonUtils.POSTER_BASE_URL + moviesData[position].getPoster_path();   //   moviesData[position]
+            String url = JsonUtils.POSTER_BASE_URL +JsonUtils.W185+ moviesData[position].getPoster_path();   //   moviesData[position]
 
             if (holder.movieImage!=null) {
                 Picasso.with(rcContext).load(url)

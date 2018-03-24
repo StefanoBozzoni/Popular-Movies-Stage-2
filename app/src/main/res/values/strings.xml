@@ -5,6 +5,7 @@
     <string name="transition_string">simple_transition_code_22</string>
     <string name="poster_image">Poster Image</string>
     <string name="poster_image_description">poster image</string>
+    <string name="addfavorites_tooltip">add to favorites</string>
 
 
 </resources>

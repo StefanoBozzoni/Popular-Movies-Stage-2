@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:contentDescription="title_tv"
+        tools:text="title_tv" />
+
+    <TextView
+        android:id="@+id/date_released_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        tools:contentDescription="date_release_tv"
+        tools:text="data_released_tv" />
+
+    <RatingBar
+        android:id="@+id/voter_average"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="201dp"
+        android:layout_height="23dp"
+        android:max="10"
+        android:numStars="10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_released_tv"
+        tools:contentDescription="voter_average" />
+
+    <TextView
+        android:id="@+id/vote_average_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/voter_average"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/voter_average"
+        app:layout_constraintTop_toTopOf="@+id/voter_average"
+        app:layout_constraintVertical_bias="1.0"
+        tools:contentDescription="voter_average_tv"
+        tools:text="voter_average_tv" />
+
+</android.support.constraint.ConstraintLayout>
+        

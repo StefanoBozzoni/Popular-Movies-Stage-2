@@ -5,13 +5,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
         <item
             android:id="@+id/mostPopular"
-            android:checked="false"
-            android:title="@string/popular_menu"
-            app:showAsAction="ifRoom" />
+            android:icon="@drawable/ic_most_popular_svg"
+            android:title=""
+            app:showAsAction="always" />
         <item
             android:id="@+id/topRated"
+            android:icon="@drawable/ic_top_rated_svg"
             android:title="@string/topRated_menu"
-            app:showAsAction="ifRoom"
-            tools:actionLayout="@style/TextAppearance.AppCompat.Menu" />
+            android:titleCondensed="@string/topRated_menu"
+            app:showAsAction="always" />
+        <item
+            android:id="@+id/preferred"
+            android:icon="@drawable/ic_favorite_border_red_24dp"
+            android:title="Item"
+            app:showAsAction="always" />
 
 </menu>

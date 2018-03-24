@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_movie_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,6 +10,7 @@
     android:paddingRight="@dimen/margin16dp"
     android:paddingTop="@dimen/margin16dp"
     tools:context=".MovieDetailActivity">
+
 
     <LinearLayout
             android:id="@+id/scrollViewContainer"
@@ -31,7 +33,8 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/poster_image_description"
                 android:transitionName="@string/transition_string" tools:targetApi="21"/>
-                <include layout="@layout/rightpane_layout" />
+
+            <include layout="@layout/rightpane_layout" />
         </LinearLayout>
         <TextView
             android:id="@+id/overview_tv"
