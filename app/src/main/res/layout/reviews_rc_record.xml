@@ -14,6 +14,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="3dp"
+        android:background="@drawable/genselector_rv"
         android:text="TextView" />
 
 </RelativeLayout>

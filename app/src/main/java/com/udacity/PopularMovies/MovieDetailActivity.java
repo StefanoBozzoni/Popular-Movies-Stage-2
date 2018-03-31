@@ -2,14 +2,14 @@ package com.udacity.PopularMovies;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -23,6 +23,10 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.udacity.PopularMovies.adapters.ReviewsAdapter;
 import com.udacity.PopularMovies.adapters.TrailersAdapter;
+import com.udacity.PopularMovies.data.FavoritesDBContract;
+import com.udacity.PopularMovies.data.FavoritesDBContract.FavoritesEntry;
+
+import com.udacity.PopularMovies.data.FavoritesDBHelper;
 import com.udacity.PopularMovies.model.MovieInfo;
 import com.udacity.PopularMovies.model.MovieItem;
 import com.udacity.PopularMovies.model.ReviewItem;
@@ -42,7 +46,8 @@ public class MovieDetailActivity extends AppCompatActivity
     private static final int  MOVIEDB_DETAIL_LOADER_ID = 26;
 
     public static final String MOVIE_OBJ_EXTRA = "MOVIES_ARR";
-    private String mMovieId;
+    private String    mMovieId;
+    private MovieItem mMovie;
 
     @BindView(R.id.moviePoster)       ImageView    m_poster;
     @BindView(R.id.backDropImage)     ImageView    m_bckDropImg;
@@ -57,6 +62,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
     private ReviewsAdapter  mReviewsAdapter;
     private TrailersAdapter mTrailersAdapter;
+    private SQLiteDatabase  mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,43 +70,64 @@ public class MovieDetailActivity extends AppCompatActivity
         setContentView(R.layout.movies_detail);
         ButterKnife.bind(this);
 
+        FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
+        mDb = dbHelper.getWritableDatabase();
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
         mReviewsRecyclerView.setHasFixedSize(true);
+        mReviewsRecyclerView.setNestedScrollingEnabled(false);
 
-        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mTrailersRecyclerView.setLayoutManager(layoutManager2);
         mTrailersRecyclerView.setHasFixedSize(true);
+        mTrailersRecyclerView.setNestedScrollingEnabled(false);
 
         Intent intent = getIntent();
         if ((intent.getExtras()!=null) && (intent.hasExtra(MOVIE_OBJ_EXTRA))) {
+
             MovieItem thisMovie =  (MovieItem) intent.getExtras().get(MOVIE_OBJ_EXTRA);
             if (thisMovie.getOriginal_title()!=null)
                 Toast.makeText(this,thisMovie.getOriginal_title(),Toast.LENGTH_SHORT).show();
 
-            //String url = JsonUtils.POSTER_BASE_URL + thisMovie.getPoster_path();   //   moviesData[position]
-            String url = JsonUtils.POSTER_BASE_URL +JsonUtils.W500+thisMovie.getBackdrop_path();   //   moviesData[position]
-            Picasso.with(this).load(url).error(R.drawable.ic_error).into(m_bckDropImg);
-            String url2 = JsonUtils.POSTER_BASE_URL +JsonUtils.W185+thisMovie.getPoster_path();
-            Picasso.with(this).load(url2).error(R.drawable.ic_error).into(m_poster);
             mMovieId = Integer.toString(thisMovie.getId());
-            m_title.setText(thisMovie.getOriginal_title());
-            m_releaseDate.setText(thisMovie.getRelease_date_printable());
-            m_voteAverage.setText(String.valueOf(thisMovie.getVote_average()));
-            m_overview.setText(thisMovie.getOverview());
-            m_voterAverage.setRating(thisMovie.getVote_average());
+            //showMovie(thisMovie);
+            String[] args=new String[]{mMovieId};
+
+            Cursor favQry= mDb.query(
+                    FavoritesDBContract.FavoritesEntry.TABLE_NAME,
+                    null,
+                    FavoritesEntry.COLUMN_MOVIE_ID+"=?",
+                    new String[]{mMovieId},
+                    null,
+                    null,
+                    null
+            );
+
+            setFavoritesOn(favQry.getCount()!=0);
 
             getSupportLoaderManager().initLoader(MOVIEDB_DETAIL_LOADER_ID,null ,this);
         }
 
-        ScrollView sv = (ScrollView)findViewById(R.id.mainscrollview);
+        ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
         sv.post(new Runnable() {
             public void run() {
-                ScrollView sv = (ScrollView)findViewById(R.id.mainscrollview);
+                ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
                 sv.fullScroll(sv.FOCUS_UP);
             }
         });
+    }
 
+    private void showMovie(MovieItem thisMovie) {
+        String url = JsonUtils.POSTER_BASE_URL +JsonUtils.W500+thisMovie.getBackdrop_path();   //   moviesData[position]
+        Picasso.with(this).load(url).error(R.drawable.ic_error).into(m_bckDropImg);
+        String url2 = JsonUtils.POSTER_BASE_URL +JsonUtils.W185+thisMovie.getPoster_path();
+        Picasso.with(this).load(url2).error(R.drawable.ic_error).into(m_poster);
+        m_title.setText(thisMovie.getOriginal_title());
+        m_releaseDate.setText("release date: "+thisMovie.getRelease_date_printable());
+        m_voteAverage.setText(String.valueOf(thisMovie.getVote_average())+"/10");
+        m_overview.setText(thisMovie.getOverview());
+        m_voterAverage.setRating(thisMovie.getVote_average());
     }
 
     @Override
@@ -115,13 +142,14 @@ public class MovieDetailActivity extends AppCompatActivity
         int drawableResourceId=0;
         if (mFavBtn.getTag()!=null) drawableResourceId = (int) mFavBtn.getTag();
 
-        if (drawableResourceId==1) {
-            mFavBtn.setImageResource(R.drawable.ic_favorite_border_red_24dp);
-            mFavBtn.setTag(0);
-        } else {
-            mFavBtn.setImageResource(R.drawable.ic_favorite_red_24dp);
-            mFavBtn.setTag(1);
+        if ((mMovie!=null) && (mDb!=null)) {
+            if (drawableResourceId == 1) {
+                if (mMovie.deleteFromDB(mDb)) setFavoritesOn(false);
+            } else {
+                if (!mMovie.ExistInDB(mDb) && mMovie.AddToDB(mDb)) setFavoritesOn(true);
+            }
         }
+
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -139,15 +167,22 @@ public class MovieDetailActivity extends AppCompatActivity
                 try {
 
                     URL movieDBURL;
+                    //loading reviews
                     String jsonMovieDBResponse="";
                     movieDBURL = JsonUtils.buildUrl(mMovieId+"/reviews");
                     jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(movieDBURL);
                     ReviewItem[]  jsonReviews  = JsonUtils.parseReviewsJson(jsonMovieDBResponse);
+                    //loading trailers
                     movieDBURL = JsonUtils.buildUrl(mMovieId+"/videos");
                     jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(movieDBURL);
                     TrailerItem[] jsonTrailers = JsonUtils.parseTrailersJson(jsonMovieDBResponse);
 
-                    return new MovieInfo(mMovieId,jsonReviews,jsonTrailers);
+                    //Loading movie
+                    movieDBURL             = JsonUtils.buildUrl(mMovieId);
+                    jsonMovieDBResponse    = JsonUtils.getResponseFromHttpUrl(movieDBURL);
+                    MovieItem jsonMovies   = JsonUtils.parseSingleMovieJson(jsonMovieDBResponse);
+
+                    return new MovieInfo(mMovieId, jsonReviews, jsonTrailers, jsonMovies);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -167,19 +202,34 @@ public class MovieDetailActivity extends AppCompatActivity
                 mReviewsAdapter = new ReviewsAdapter();
                 mReviewsRecyclerView.setAdapter(mReviewsAdapter);
                 mReviewsAdapter.setReviewsData(movieInfo.getReviews());
-
             }
+
             if ((movieInfo!=null) && (movieInfo.getTrailers()!=null)) {
                 mTrailersAdapter = new TrailersAdapter();
                 mTrailersRecyclerView.setAdapter(mTrailersAdapter);
                 mTrailersAdapter.setTrailersData(movieInfo.getTrailers());
             }
 
+            if ((movieInfo!=null) && (movieInfo.getMovie()!=null)) {
+                mMovie=movieInfo.getMovie();
+                showMovie(mMovie);
+            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<MovieInfo> loader) {
+
+    }
+
+    private void setFavoritesOn(boolean showstate) {
+        if (showstate) {
+            mFavBtn.setImageResource(R.drawable.ic_favorite_red_24dp);
+            mFavBtn.setTag(1);}
+        else {
+            mFavBtn.setImageResource(R.drawable.ic_favorite_border_red_24dp);
+            mFavBtn.setTag(0);
+        }
 
     }
 

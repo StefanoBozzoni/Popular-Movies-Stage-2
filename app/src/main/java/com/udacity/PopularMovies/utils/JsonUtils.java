@@ -56,6 +56,7 @@ public class JsonUtils {
 
     public final static String MOVIEDB_BASE_URL = "http://api.themoviedb.org/3/movie/";
     public final static String POSTER_BASE_URL  = "http://image.tmdb.org/t/p/";
+    public final static String YOUTUBE_TN_URL   = "http://img.youtube.com/vi/";
 
     public final static String W185 ="w185";
     public final static String W500 ="w500";
@@ -83,6 +84,37 @@ public class JsonUtils {
 
         return url;
     }
+
+    public static MovieItem parseSingleMovieJson(String json) {
+        try {
+            JSONObject aMovieItem        = new JSONObject(json);
+            //JSONArray arrayJsonRoot  = myJson.getJSONArray("results");
+            //int num_movies=arrayJsonRoot.length();
+            MovieItem movie = new MovieItem();
+            int id                    = getJsonInt(aMovieItem         ,MovieItem.id_Json);
+            int vote_count            = getJsonInt(aMovieItem         ,MovieItem.vote_count_Json);
+            float vote_average        = getJsonFloat(aMovieItem       ,MovieItem.vote_average_Json);
+            boolean video             = getJsonBoolean(aMovieItem     ,MovieItem.video_Json);
+            int popularity            = getJsonInt(aMovieItem         ,MovieItem.popularity_Json);
+            String poster_path        = getJsonString(aMovieItem      ,MovieItem.poster_path_Json);
+            String original_language  = getJsonString(aMovieItem      ,MovieItem.original_language_Json);
+            String original_title     = getJsonString(aMovieItem      ,MovieItem.original_title_Json);
+            //List<Integer> genre_ids   = getJsonIntegerList(aMovieItem ,MovieItem.genre_ids_Json);
+            String backdrop_path      = getJsonString(aMovieItem      ,MovieItem.backdrop_path_Json);
+            boolean adult             = getJsonBoolean(aMovieItem     ,MovieItem.adult_Json);
+            String overview           = getJsonString(aMovieItem      ,MovieItem.overview_Json);
+            Date release_date         = getJsonDate(aMovieItem        ,MovieItem.release_date_Json);
+            movie = new MovieItem(id,vote_count,vote_average,video,popularity,poster_path,original_language,original_title,null,
+                    backdrop_path,adult,overview,release_date);
+            return movie;
+        }
+        catch (JSONException e) {
+            Log.d(TAG,"Couldn't parse Json Movies Object:"+json);
+            //e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public static MovieItem[] parseMoviesJson(String json) {
         try {
@@ -214,4 +246,7 @@ public class JsonUtils {
         return release_date;
     }
 
+    public static String makeThumbnailURL(String key) {
+        return YOUTUBE_TN_URL.concat(key).concat("/hqdefault.jpg");
+    }
 }

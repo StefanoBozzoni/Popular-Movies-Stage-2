@@ -1,7 +1,12 @@
 package com.udacity.PopularMovies.model;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.udacity.PopularMovies.data.FavoritesDBContract;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,12 +44,13 @@ public class MovieItem implements Parcelable {
     private Date release_date;
 
     public MovieItem() {
+
     }
 
     public MovieItem(int id, int vote_count, float vote_average, boolean video, int popularity, String poster_path,
                      String original_language, String original_title, List<Integer> genre_ids,
                      String backdrop_path, boolean adult, String overview, Date release_date) {
-        this.id=id;
+        this.id            =id;
         this.vote_count    =vote_count;
         this.vote_average =vote_average;
         this.video         =video;
@@ -226,4 +232,33 @@ public class MovieItem implements Parcelable {
             return new MovieItem[size];
         }
     };
+
+    public boolean ExistInDB(SQLiteDatabase mDb) {
+        Cursor favQry= mDb.query(
+                FavoritesDBContract.FavoritesEntry.TABLE_NAME,
+                null,
+                FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID+"=?",
+                new String[]{Integer.toString(getId())},
+                null,
+                null,
+                null
+        );
+        boolean result=(favQry.getCount()!=0);
+        favQry.close();
+        return result;
+    }
+
+    public boolean AddToDB(SQLiteDatabase mDb) {
+        ContentValues cv = new ContentValues();
+        cv.put(FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID, getId());
+        cv.put(FavoritesDBContract.FavoritesEntry.COLUMN_POSTER_PATH, getPoster_path());
+        long rowInserted = mDb.insert(FavoritesDBContract.FavoritesEntry.TABLE_NAME, null, cv);
+        return (rowInserted!=0);
+    }
+
+    public  boolean deleteFromDB(SQLiteDatabase mDb) {
+        String sMovieId=Integer.toString(getId());
+        int rowsaffected= mDb.delete(FavoritesDBContract.FavoritesEntry.TABLE_NAME, FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID+"="+sMovieId,null);
+        return (rowsaffected!=0);
+    }
 }

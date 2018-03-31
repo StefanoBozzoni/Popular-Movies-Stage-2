@@ -1,19 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/thumbnail_width"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+
+    <ImageButton
+        android:id="@+id/imagebutton1"
+        android:layout_width="@dimen/playbtn_width"
+        android:layout_height="@dimen/playbtn_heigth"
+        android:layout_marginLeft="@dimen/playbtn_marginLeft"
+        android:layout_marginTop="@dimen/playbtn_marginTop"
+        android:background="@drawable/ic_play_svg"
+        android:elevation="@dimen/playbtn_elevation"
+        android:clickable="false"
+        android:foregroundGravity="center" />
+
+
+
+    <ImageView
+        android:id="@+id/imgThumbnail"
+        android:layout_width="@dimen/imgThumbnail_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentStart="false"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:minHeight="@dimen/imgThumbnail_minHeight">
+    </ImageView>
+
+
     <TextView
         android:id="@+id/name_tv"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/trailers_thumbnail_tv_width"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="3dp"
-        android:text="trailer" />
+        android:layout_below="@+id/imgThumbnail"
+        android:text="@string/trailers_title"
+        android:textSize="@dimen/textSize12sp" />
+
 
 </RelativeLayout>

@@ -1,73 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <!--
+    android:layout_marginTop="-500dp"
+    -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/moviePoster"
-        android:layout_width="0dp"
-        android:layout_gravity="center"
-        android:contentDescription="@string/poster_image"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:fitsSystemWindows="true"
-        app:layout_collapseMode="parallax"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintDimensionRatio="h,16:9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+            <ImageButton
+                android:id="@+id/addFavBtn"
+                android:layout_width="@dimen/width_fav_img"
+                android:layout_height="@dimen/height_fav_img"
+                android:layout_marginStart="@dimen/margin4dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/add_fav_button_content"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/include"
+                app:srcCompat="@drawable/ic_favorite_border_red_24dp"
+                tools:ignore="VectorDrawableCompat"
+                tools:onClick="addFavClick" />
 
-    <ImageButton
-        android:id="@+id/addFavBtn"
-        android:layout_width="40dp"
-        android:layout_height="39dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="add_fav_button"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="spread"
-        app:layout_constraintTop_toTopOf="@+id/guideline2"
-        app:layout_constraintWidth_default="spread"
-        app:srcCompat="@drawable/ic_favorite_border_red_24dp"
-        tools:ignore="VectorDrawableCompat" />
+            <ImageView
+                android:id="@+id/backDropImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_backdrop_image"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/poster_image"
+                android:fitsSystemWindows="true"
+                android:scaleType="fitXY"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/rightpane_c_layout"
-        android:layout_width="301dp"
-        android:layout_height="158dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+            <ImageView
+                android:id="@+id/moviePoster"
+                android:layout_width="@dimen/poster_width_img"
+                android:layout_height="@dimen/poster_height_img"
+                android:layout_marginBottom="@dimen/margin4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/margin4dp"
+                android:adjustViewBounds="false"
+                android:contentDescription="@string/poster_image"
+                android:cropToPadding="false"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toTopOf="@+id/overview_tv"
+                app:layout_constraintDimensionRatio="w,1:1"
+                app:layout_constraintStart_toEndOf="@+id/addFavBtn"
+                app:layout_constraintTop_toBottomOf="@+id/backDropImage"
+                app:layout_constraintVertical_bias="0.0" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
+            <include
+                android:id="@+id/include"
+                layout="@layout/rightpane_c_layout"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/rightpane_heigth"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/margin4dp"
+                app:layout_constraintStart_toEndOf="@+id/moviePoster"
+                app:layout_constraintTop_toBottomOf="@+id/backDropImage" />
+
+            <TextView
+                android:id="@+id/overview_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin8dp"
+                android:layout_marginStart="@dimen/margin8dp"
+                android:layout_marginTop="@dimen/margin8dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/include" />
+
+            <!--
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/NestedScrollView1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.32" />
-
-    <TextView
-        android:id="@+id/overview_tv"
-        android:layout_width="351dp"
-        android:layout_height="156dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textSize="@dimen/size16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
+        app:layout_constraintTop_toBottomOf="@+id/overview_tv">
+-->
+            <TextView
+                android:id="@+id/trailers_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/margin8dp"
+                android:layout_marginStart="@dimen/margin8dp"
+                android:text="@string/trailers_title"
+                android:textAlignment="center"
+                android:textSize="@dimen/titles_tv_textsize"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/overview_tv" />
 
-</android.support.constraint.ConstraintLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/trailers_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin8dp"
+                android:layout_marginStart="@dimen/margin8dp"
+                android:layout_marginTop="@dimen/margin4dp"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/trailers_title_tv" />
+
+            <TextView
+                android:id="@+id/reviews_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/margin8dp"
+                android:layout_marginStart="@dimen/margin8dp"
+                android:layout_marginTop="@dimen/margin8dp"
+                android:text="@string/reviews_title"
+                android:textAlignment="center"
+                android:textSize="@dimen/titles_tv_textsize"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/trailers_rv" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reviews_rv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/reviews_rv_height"
+                android:layout_marginEnd="@dimen/margin8dp"
+                android:layout_marginStart="@dimen/margin8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollbars="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reviews_title_tv" />
+
+            <!--
+    </android.support.v4.widget.NestedScrollView>
+    -->
+        </android.support.constraint.ConstraintLayout>
+    </FrameLayout>
+</ScrollView>
+

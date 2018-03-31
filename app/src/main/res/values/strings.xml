@@ -6,6 +6,10 @@
     <string name="poster_image">Poster Image</string>
     <string name="poster_image_description">poster image</string>
     <string name="addfavorites_tooltip">add to favorites</string>
+    <string name="favorites_menu">favorites</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="trailers_title">Trailers</string>
+    <string name="add_fav_button_content">add_fav_button</string>
 
 
 </resources>

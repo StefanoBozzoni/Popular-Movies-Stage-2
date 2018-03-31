@@ -15,8 +15,8 @@
             android:titleCondensed="@string/topRated_menu"
             app:showAsAction="always" />
         <item
-            android:id="@+id/preferred"
-            android:icon="@drawable/ic_favorite_border_red_24dp"
+            android:id="@+id/favMenuItem"
+            android:icon="@drawable/ic_favorite_border_white_24dp"
             android:title="Item"
             app:showAsAction="always" />
 

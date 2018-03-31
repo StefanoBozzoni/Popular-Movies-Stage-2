@@ -9,12 +9,14 @@ public class MovieInfo implements Parcelable {
     private String movieId;
     private ReviewItem[]  reviews;
     private TrailerItem[] trailers;
+    private MovieItem movie;
 
 
-    public MovieInfo(String movieId,ReviewItem[] reviews, TrailerItem[] trailers) {
+    public MovieInfo(String movieId,ReviewItem[] reviews, TrailerItem[] trailers, MovieItem aMovie) {
         this.movieId  = movieId;
-        this.reviews  =reviews;
-        this.trailers =trailers;
+        this.reviews  = reviews;
+        this.trailers = trailers;
+        this.movie    = aMovie;
     }
 
     public String getMovieId() {
@@ -41,6 +43,11 @@ public class MovieInfo implements Parcelable {
 
     public void setTrailers(TrailerItem[] trailers) {
         trailers = trailers;
+    }
+
+
+    public MovieItem getMovie() {
+        return movie;
     }
 
 
