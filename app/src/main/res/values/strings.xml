@@ -4,12 +4,14 @@
     <string name="topRated_menu">Top Rated</string>
     <string name="transition_string">simple_transition_code_22</string>
     <string name="poster_image">Poster Image</string>
-    <string name="poster_image_description">poster image</string>
-    <string name="addfavorites_tooltip">add to favorites</string>
     <string name="favorites_menu">favorites</string>
     <string name="reviews_title">Reviews</string>
     <string name="trailers_title">Trailers</string>
     <string name="add_fav_button_content">add_fav_button</string>
-
-
+    <string name="release_date">release date: %1$s</string>
+    <string name="max_vote">/10</string>
+    <string name="no_reviews_message">There isn\'t any review to show</string>
+    <string name="no_trailers_message">There isn\'t any trailer to show</string>
+    <string name="favorites_menu_title">Favorites</string>
+    <string name="most_popular_menu_title">Most popular</string>
 </resources>

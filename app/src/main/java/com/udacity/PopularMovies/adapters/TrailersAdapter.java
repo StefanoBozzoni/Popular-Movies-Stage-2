@@ -31,8 +31,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
 
         public ViewHolder(View view) {
             super(view);
-            name_tv      = (TextView)  view.findViewById(R.id.name_tv);
-            imgThumbnail = (ImageView) view.findViewById(R.id.imgThumbnail);
+            name_tv      =  view.findViewById(R.id.name_tv);
+            imgThumbnail =  view.findViewById(R.id.imgThumbnail);
             view.setOnClickListener(this);
             //view.setOnLongClickListener(this);
         }
@@ -60,7 +60,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
         if ((holder != null) && (getItemCount() != 0)) {
             String content=mTrailersData[position].getName();
             if (content.length()>90) content=content.substring(0,90);
-            holder.name_tv.setText(content+"...");
+            holder.name_tv.setText(String.format("%s...", content));
             //Set the thumbnail image
             String thumbnailURL = JsonUtils.makeThumbnailURL(mTrailersData[position].getKey());
             if (holder.imgThumbnail!=null)

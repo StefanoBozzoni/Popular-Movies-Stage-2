@@ -12,6 +12,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -76,9 +78,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.ic_movie_logo_round);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        if (getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setLogo(R.mipmap.ic_movie_logo_round);
+            getSupportActionBar().setDisplayUseLogoEnabled(true);
+        }
 
         if (savedInstanceState!=null)
            mRecyclerViewState=savedInstanceState.getParcelable(RECYCLER_VIEW_STATE);
@@ -113,10 +117,6 @@ public class MainActivity extends AppCompatActivity
         // Create a DB helper (this will create the DB if run for the first time)
         FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
         mDb = dbHelper.getWritableDatabase();
-        //ContentValues cv = new ContentValues();
-        //cv.put(FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID,12345);
-        //long rowInserted =mDb.insert(FavoritesDBContract.FavoritesEntry.TABLE_NAME,null,cv);
-        int rowsaffected= mDb.delete(FavoritesDBContract.FavoritesEntry.TABLE_NAME,"id=12345",null);
 
         LoaderManager loaderManager = getSupportLoaderManager();
         loaderManager.initLoader(MOVIEDB_SEARCH_LOADER_ID, queryBundle, MainActivity.this);
@@ -143,8 +143,8 @@ public class MainActivity extends AppCompatActivity
                 FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID);
 
         MovieItem[] resMovies = new MovieItem[favQry.getCount()];
-        //iterate on cursor loading movies....
         favQry.moveToFirst();
+        //iterate on cursor loading movies....
         for (int i=0;i<favQry.getCount();i++) {
             resMovies[i]= new MovieItem();
             int mId= favQry.getInt(favQry.getColumnIndex(FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID));
@@ -185,26 +185,25 @@ public class MainActivity extends AppCompatActivity
                     tipoQuery = MOST_POPULAR_QUERY_TAG;
 
                 URL MovieDBURL;
+                MovieItem[] moviesToShow=null;
+                if (tipoQuery!=null) {
+                    if (tipoQuery.equals(FAVORITES_QUERY_TAG)) {
+                        moviesToShow = loadFavoritesFromCursor();
+                    } else {
+                        if (tipoQuery.equals(MOST_POPULAR_QUERY_TAG))
+                            MovieDBURL = JsonUtils.buildUrl(MOST_POPULAR_QUERY_TAG);
+                        else
+                            MovieDBURL = JsonUtils.buildUrl(TOP_RATED_QUERY_TAG);
 
-                MovieItem[] moviesToShow;
-                moviesToShow=null;
-
-                if  (tipoQuery.equals(FAVORITES_QUERY_TAG))
-                {   moviesToShow=loadFavoritesFromCursor(); }
-                else
-                {
-                    if (tipoQuery.equals(MOST_POPULAR_QUERY_TAG))
-                        MovieDBURL = JsonUtils.buildUrl(MOST_POPULAR_QUERY_TAG);
-                    else
-                        MovieDBURL = JsonUtils.buildUrl(TOP_RATED_QUERY_TAG);
-
-                    try {
-                        String jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(MovieDBURL);
-                        moviesToShow = JsonUtils.parseMoviesJson(jsonMovieDBResponse);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
+                        try {
+                            String jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(MovieDBURL);
+                            moviesToShow = JsonUtils.parseMoviesJson(jsonMovieDBResponse);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
                     }
+
                 }
                 return moviesToShow;
             }
@@ -307,7 +306,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showActiveMenuItem(Menu pMenu, String menuActivated) {
-        MenuItem aMenuItem=pMenu.findItem(R.id.mostPopular);;
+        MenuItem aMenuItem=pMenu.findItem(R.id.mostPopular);
         //aMenuItem = pMenu.findItem(R.id.topRated);
         //aMenuItem.setTitle(getString(R.string.topRated_menu));
         //aMenuItem = pMenu.findItem(R.id.mostPopular);
@@ -322,12 +321,15 @@ public class MainActivity extends AppCompatActivity
         for (int i=0;i<=2;i++) {
             mSelectedMenuItem = mMenu.getItem(i);
             Drawable drawableIcon = mSelectedMenuItem.getIcon();
-            if (drawableIcon != null) drawableIcon.mutate();
-            if (mSelectedMenuItem==aMenuItem)
-            {drawableIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);}
-            else
-            {drawableIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);}
-            mSelectedMenuItem.setIcon(drawableIcon);
+            if (drawableIcon != null) {
+                drawableIcon.mutate();
+                if (mSelectedMenuItem == aMenuItem) {
+                    drawableIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                } else {
+                    drawableIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                }
+                mSelectedMenuItem.setIcon(drawableIcon);
+            }
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

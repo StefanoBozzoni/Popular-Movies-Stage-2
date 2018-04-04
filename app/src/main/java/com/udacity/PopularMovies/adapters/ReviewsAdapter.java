@@ -16,16 +16,16 @@ import com.udacity.PopularMovies.model.ReviewItem;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
 
-    ReviewItem[] mReviewsData;
+    private ReviewItem[] mReviewsData;
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final TextView content_tv;
+        private final TextView content_tv;
 
         public ViewHolder(View view) {
             super(view);
-            content_tv = (TextView) view.findViewById(R.id.content_tv);
+            content_tv = view.findViewById(R.id.content_tv);
             //(TextView) view.findViewById(R.id.content_tv);
             view.setOnClickListener(this);
         }
@@ -53,7 +53,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
             String content=mReviewsData[position].getContent();
             if (content.length()>90) content=content.substring(0,90);
 
-            holder.content_tv.setText(content+"...");
+            holder.content_tv.setText(String.format("%s...", content));
         }
     }
 

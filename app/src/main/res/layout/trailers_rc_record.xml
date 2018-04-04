@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/thumbnail_width"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -8,14 +8,15 @@
 
     <ImageButton
         android:id="@+id/imagebutton1"
-        android:layout_width="@dimen/playbtn_width"
-        android:layout_height="@dimen/playbtn_heigth"
-        android:layout_marginLeft="@dimen/playbtn_marginLeft"
-        android:layout_marginTop="@dimen/playbtn_marginTop"
+        android:layout_width="@dimen/playBtn_width"
+        android:layout_height="@dimen/playBtn_height"
+        android:layout_marginStart="@dimen/playBtn_marginLeft"
+        android:layout_marginTop="@dimen/playBtn_marginTop"
         android:background="@drawable/ic_play_svg"
-        android:elevation="@dimen/playbtn_elevation"
+        android:elevation="@dimen/playBtn_elevation"
         android:clickable="false"
-        android:foregroundGravity="center" />
+        android:foregroundGravity="center"
+        tools:ignore="ContentDescription" />
 
 
 
@@ -27,7 +28,8 @@
         android:layout_alignParentStart="false"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
-        android:minHeight="@dimen/imgThumbnail_minHeight">
+        android:minHeight="@dimen/imgThumbnail_minHeight"
+        tools:ignore="ContentDescription">
     </ImageView>
 
 

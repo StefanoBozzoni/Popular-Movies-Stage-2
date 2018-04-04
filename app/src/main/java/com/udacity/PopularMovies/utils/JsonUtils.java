@@ -85,32 +85,40 @@ public class JsonUtils {
         return url;
     }
 
-    public static MovieItem parseSingleMovieJson(String json) {
+    public static MovieItem parseSingleMovieJsonObject(JSONObject aMovieItem)  {
         try {
-            JSONObject aMovieItem        = new JSONObject(json);
-            //JSONArray arrayJsonRoot  = myJson.getJSONArray("results");
-            //int num_movies=arrayJsonRoot.length();
-            MovieItem movie = new MovieItem();
-            int id                    = getJsonInt(aMovieItem         ,MovieItem.id_Json);
-            int vote_count            = getJsonInt(aMovieItem         ,MovieItem.vote_count_Json);
-            float vote_average        = getJsonFloat(aMovieItem       ,MovieItem.vote_average_Json);
-            boolean video             = getJsonBoolean(aMovieItem     ,MovieItem.video_Json);
-            int popularity            = getJsonInt(aMovieItem         ,MovieItem.popularity_Json);
-            String poster_path        = getJsonString(aMovieItem      ,MovieItem.poster_path_Json);
-            String original_language  = getJsonString(aMovieItem      ,MovieItem.original_language_Json);
-            String original_title     = getJsonString(aMovieItem      ,MovieItem.original_title_Json);
-            //List<Integer> genre_ids   = getJsonIntegerList(aMovieItem ,MovieItem.genre_ids_Json);
-            String backdrop_path      = getJsonString(aMovieItem      ,MovieItem.backdrop_path_Json);
-            boolean adult             = getJsonBoolean(aMovieItem     ,MovieItem.adult_Json);
-            String overview           = getJsonString(aMovieItem      ,MovieItem.overview_Json);
-            Date release_date         = getJsonDate(aMovieItem        ,MovieItem.release_date_Json);
-            movie = new MovieItem(id,vote_count,vote_average,video,popularity,poster_path,original_language,original_title,null,
-                    backdrop_path,adult,overview,release_date);
+            MovieItem movie;// = new MovieItem();
+            int id = getJsonInt(aMovieItem, MovieItem.id_Json);
+            int vote_count = getJsonInt(aMovieItem, MovieItem.vote_count_Json);
+            float vote_average = getJsonFloat(aMovieItem, MovieItem.vote_average_Json);
+            boolean video = getJsonBoolean(aMovieItem, MovieItem.video_Json);
+            int popularity = getJsonInt(aMovieItem, MovieItem.popularity_Json);
+            String poster_path = getJsonString(aMovieItem, MovieItem.poster_path_Json);
+            String original_language = getJsonString(aMovieItem, MovieItem.original_language_Json);
+            String original_title = getJsonString(aMovieItem, MovieItem.original_title_Json);
+            //not necessary: List<Integer> genre_ids   = getJsonIntegerList(aMovieItem ,MovieItem.genre_ids_Json);
+            String backdrop_path = getJsonString(aMovieItem, MovieItem.backdrop_path_Json);
+            boolean adult = getJsonBoolean(aMovieItem, MovieItem.adult_Json);
+            String overview = getJsonString(aMovieItem, MovieItem.overview_Json);
+            Date release_date = getJsonDate(aMovieItem, MovieItem.release_date_Json);
+            movie = new MovieItem(id, vote_count, vote_average, video, popularity, poster_path, original_language, original_title, null,
+                    backdrop_path, adult, overview, release_date);
             return movie;
         }
         catch (JSONException e) {
+                Log.d(TAG,"Couldn't parse Json Movies Object:"+aMovieItem.toString());
+                e.printStackTrace();
+                return null;
+        }
+    }
+
+    public static MovieItem parseSingleMovieJson(String json) {
+        try {
+            JSONObject aMovieItem        = new JSONObject(json);
+            return parseSingleMovieJsonObject(aMovieItem);
+        }
+        catch (JSONException e) {
             Log.d(TAG,"Couldn't parse Json Movies Object:"+json);
-            //e.printStackTrace();
             return null;
         }
     }
@@ -124,22 +132,8 @@ public class JsonUtils {
 
             MovieItem[] movies = new MovieItem[num_movies];
             for (int i=0;i<num_movies;i++) {
-              JSONObject aMovieItem     = arrayJsonRoot.getJSONObject(i);
-              int id                    = getJsonInt(aMovieItem         ,MovieItem.id_Json);
-              int vote_count            = getJsonInt(aMovieItem         ,MovieItem.vote_count_Json);
-              float vote_average        = getJsonFloat(aMovieItem       ,MovieItem.vote_average_Json);
-              boolean video             = getJsonBoolean(aMovieItem     ,MovieItem.video_Json);
-              int popularity            = getJsonInt(aMovieItem         ,MovieItem.popularity_Json);
-              String poster_path        = getJsonString(aMovieItem      ,MovieItem.poster_path_Json);
-              String original_language  = getJsonString(aMovieItem      ,MovieItem.original_language_Json);
-              String original_title     = getJsonString(aMovieItem      ,MovieItem.original_title_Json);
-              List<Integer> genre_ids   = getJsonIntegerList(aMovieItem ,MovieItem.genre_ids_Json);
-              String backdrop_path      = getJsonString(aMovieItem      ,MovieItem.backdrop_path_Json);
-              boolean adult             = getJsonBoolean(aMovieItem     ,MovieItem.adult_Json);
-              String overview           = getJsonString(aMovieItem      ,MovieItem.overview_Json);
-              Date release_date         = getJsonDate(aMovieItem        ,MovieItem.release_date_Json);
-              movies[i] = new MovieItem(id,vote_count,vote_average,video,popularity,poster_path,original_language,original_title,genre_ids,
-              backdrop_path,adult,overview,release_date);
+                JSONObject aMovieItem     = arrayJsonRoot.getJSONObject(i);
+                movies[i] = parseSingleMovieJsonObject(aMovieItem);
             }
             return movies;
         }
@@ -236,7 +230,7 @@ public class JsonUtils {
 
         String release_date_str   = getJsonString(pJson      ,propertyName);
         SimpleDateFormat sdf      = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        Date release_date = null;
+        Date release_date; // = null;
         try {
             release_date = sdf.parse(release_date_str);
         }

@@ -23,8 +23,8 @@ public class MovieInfo implements Parcelable {
         return movieId;
     }
 
-    public void setMovieId(String movieId) {
-        movieId = movieId;
+    public void setMovieId(String pMovieId) {
+        this.movieId = pMovieId;
     }
 
 
@@ -33,7 +33,7 @@ public class MovieInfo implements Parcelable {
     }
 
     public void setReviews(ReviewItem[] reviews) {
-        reviews = reviews;
+        this.reviews = reviews;
     }
 
 
@@ -41,8 +41,8 @@ public class MovieInfo implements Parcelable {
         return trailers;
     }
 
-    public void setTrailers(TrailerItem[] trailers) {
-        trailers = trailers;
+    public void setTrailers(TrailerItem[] pTrailers) {
+        this.trailers = pTrailers;
     }
 
 

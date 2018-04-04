@@ -32,9 +32,7 @@ import com.udacity.PopularMovies.model.MovieItem;
 import com.udacity.PopularMovies.model.ReviewItem;
 import com.udacity.PopularMovies.model.TrailerItem;
 import com.udacity.PopularMovies.utils.JsonUtils;
-
 import java.net.URL;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,6 +57,9 @@ public class MovieDetailActivity extends AppCompatActivity
     @BindView(R.id.addFavBtn)         ImageButton  mFavBtn;
     @BindView(R.id.reviews_rv)        RecyclerView mReviewsRecyclerView;
     @BindView(R.id.trailers_rv)       RecyclerView mTrailersRecyclerView;
+    @BindView(R.id.trailers_title_tv) TextView     mTrailersTitleRv;
+    @BindView(R.id.reviews_title_tv)  TextView     mReviewsTitleRv;
+    @BindView(R.id.mainScrollView)    ScrollView   mScrollView;
 
     private ReviewsAdapter  mReviewsAdapter;
     private TrailersAdapter mTrailersAdapter;
@@ -87,33 +88,32 @@ public class MovieDetailActivity extends AppCompatActivity
         if ((intent.getExtras()!=null) && (intent.hasExtra(MOVIE_OBJ_EXTRA))) {
 
             MovieItem thisMovie =  (MovieItem) intent.getExtras().get(MOVIE_OBJ_EXTRA);
-            if (thisMovie.getOriginal_title()!=null)
-                Toast.makeText(this,thisMovie.getOriginal_title(),Toast.LENGTH_SHORT).show();
+            if (thisMovie!=null) {
+                if (thisMovie.getOriginal_title() != null)
+                    Toast.makeText(this, thisMovie.getOriginal_title(), Toast.LENGTH_SHORT).show();
 
-            mMovieId = Integer.toString(thisMovie.getId());
-            //showMovie(thisMovie);
-            String[] args=new String[]{mMovieId};
-
-            Cursor favQry= mDb.query(
-                    FavoritesDBContract.FavoritesEntry.TABLE_NAME,
-                    null,
-                    FavoritesEntry.COLUMN_MOVIE_ID+"=?",
-                    new String[]{mMovieId},
-                    null,
-                    null,
-                    null
-            );
-
-            setFavoritesOn(favQry.getCount()!=0);
+                mMovieId = Integer.toString(thisMovie.getId());
+                Cursor favQry = mDb.query(
+                        FavoritesDBContract.FavoritesEntry.TABLE_NAME,
+                        null,
+                        FavoritesEntry.COLUMN_MOVIE_ID + "=?",
+                        new String[]{mMovieId},
+                        null,
+                        null,
+                        null
+                );
+                setFavoritesOn(favQry.getCount() != 0);
+                favQry.close();
+            }
 
             getSupportLoaderManager().initLoader(MOVIEDB_DETAIL_LOADER_ID,null ,this);
         }
 
-        ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
-        sv.post(new Runnable() {
+        //ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
+        mScrollView.post(new Runnable() {
             public void run() {
-                ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
-                sv.fullScroll(sv.FOCUS_UP);
+                //ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
+                mScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         });
     }
@@ -124,8 +124,8 @@ public class MovieDetailActivity extends AppCompatActivity
         String url2 = JsonUtils.POSTER_BASE_URL +JsonUtils.W185+thisMovie.getPoster_path();
         Picasso.with(this).load(url2).error(R.drawable.ic_error).into(m_poster);
         m_title.setText(thisMovie.getOriginal_title());
-        m_releaseDate.setText("release date: "+thisMovie.getRelease_date_printable());
-        m_voteAverage.setText(String.valueOf(thisMovie.getVote_average())+"/10");
+        m_releaseDate.setText(getString(R.string.release_date,thisMovie.getRelease_date_printable()));
+        m_voteAverage.setText(String.format("%s%s", String.valueOf(thisMovie.getVote_average()), getString(R.string.max_vote)));
         m_overview.setText(thisMovie.getOverview());
         m_voterAverage.setRating(thisMovie.getVote_average());
     }
@@ -168,7 +168,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
                     URL movieDBURL;
                     //loading reviews
-                    String jsonMovieDBResponse="";
+                    String jsonMovieDBResponse;//="";
                     movieDBURL = JsonUtils.buildUrl(mMovieId+"/reviews");
                     jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(movieDBURL);
                     ReviewItem[]  jsonReviews  = JsonUtils.parseReviewsJson(jsonMovieDBResponse);
@@ -195,22 +195,32 @@ public class MovieDetailActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<MovieInfo> loader, MovieInfo movieInfo) {
+
         if (movieInfo!=null) {
-
             //Set recyclerviews Adapters here
-            if ((movieInfo!=null) && (movieInfo.getReviews()!=null)) {
-                mReviewsAdapter = new ReviewsAdapter();
-                mReviewsRecyclerView.setAdapter(mReviewsAdapter);
-                mReviewsAdapter.setReviewsData(movieInfo.getReviews());
+            if (movieInfo.getReviews()!=null) {
+                if (movieInfo.getReviews().length!=0) {
+                    mReviewsTitleRv.setText(getString(R.string.reviews_title));
+                    mReviewsAdapter = new ReviewsAdapter();
+                    mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+                    mReviewsAdapter.setReviewsData(movieInfo.getReviews());
+                } else {
+                    mReviewsTitleRv.setText(R.string.no_reviews_message);
+                }
             }
 
-            if ((movieInfo!=null) && (movieInfo.getTrailers()!=null)) {
-                mTrailersAdapter = new TrailersAdapter();
-                mTrailersRecyclerView.setAdapter(mTrailersAdapter);
-                mTrailersAdapter.setTrailersData(movieInfo.getTrailers());
+            if (movieInfo.getTrailers()!=null) {
+                if (movieInfo.getTrailers().length!=0) {
+                    mTrailersTitleRv.setText(getString(R.string.trailers_title));
+                    mTrailersAdapter = new TrailersAdapter();
+                    mTrailersRecyclerView.setAdapter(mTrailersAdapter);
+                    mTrailersAdapter.setTrailersData(movieInfo.getTrailers());
+                } else {
+                    mTrailersTitleRv.setText(R.string.no_trailers_message);
+                }
             }
 
-            if ((movieInfo!=null) && (movieInfo.getMovie()!=null)) {
+            if (movieInfo.getMovie()!=null) {
                 mMovie=movieInfo.getMovie();
                 showMovie(mMovie);
             }

@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_menu"
+<menu android:id="@+id/main_menu"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
         <item
             android:id="@+id/mostPopular"
             android:icon="@drawable/ic_most_popular_svg"
-            android:title=""
-            app:showAsAction="always" />
+            android:title="@string/most_popular_menu_title"
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/topRated"
             android:icon="@drawable/ic_top_rated_svg"
             android:title="@string/topRated_menu"
             android:titleCondensed="@string/topRated_menu"
-            app:showAsAction="always" />
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/favMenuItem"
             android:icon="@drawable/ic_favorite_border_white_24dp"
-            android:title="Item"
-            app:showAsAction="always" />
+            android:title="@string/favorites_menu_title"
+            app:showAsAction="ifRoom" />
 
 </menu>

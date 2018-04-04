@@ -37,7 +37,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.PMViewHold
 
         public PMViewHolder(View view) {
             super(view);
-            movieImage = (ImageView) view.findViewById(R.id.imageView_pm);
+            movieImage = view.findViewById(R.id.imageView_pm);
             view.setOnClickListener(this);
             view.setOnLongClickListener(this);
         }
