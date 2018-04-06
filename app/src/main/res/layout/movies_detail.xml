@@ -108,13 +108,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/overview_tv" />
 
-            <android.support.v7.widget.RecyclerView
+            <com.udacity.PopularMovies.MyRecyclerView
                 android:id="@+id/trailers_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/margin8dp"
                 android:layout_marginStart="@dimen/margin8dp"
                 android:layout_marginTop="@dimen/margin4dp"
+                android:tag="trailers_recyclerview"
                 android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -137,7 +138,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/trailers_rv" />
 
 
-            <android.support.v7.widget.RecyclerView
+            <com.udacity.PopularMovies.MyRecyclerView
                 android:id="@+id/reviews_rv"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/reviews_rv_height"
@@ -145,6 +146,7 @@
                 android:layout_marginStart="@dimen/margin8dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:tag="reviews_recyclerview"
                 android:focusableInTouchMode="true"
                 android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"

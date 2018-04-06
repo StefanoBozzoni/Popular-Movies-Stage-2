@@ -1,12 +1,15 @@
 package com.udacity.PopularMovies.model;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.udacity.PopularMovies.data.FavoritesDBContract;
+import com.udacity.PopularMovies.data.FavoritesProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -233,13 +236,12 @@ public class MovieItem implements Parcelable {
         }
     };
 
-    public boolean ExistInDB(SQLiteDatabase mDb) {
-        Cursor favQry= mDb.query(
-                FavoritesDBContract.FavoritesEntry.TABLE_NAME,
+    public boolean ExistInDB(ContentResolver res) {
+        Cursor favQry= res.query(
+                FavoritesDBContract.CONTENT_URI,
                 null,
                 FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID+"=?",
                 new String[]{Integer.toString(getId())},
-                null,
                 null,
                 null
         );
@@ -248,6 +250,8 @@ public class MovieItem implements Parcelable {
         return result;
     }
 
+    /*
+    to add directly in a db without passing from a provider:
     public boolean AddToDB(SQLiteDatabase mDb) {
         ContentValues cv = new ContentValues();
         cv.put(FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID, getId());
@@ -255,10 +259,21 @@ public class MovieItem implements Parcelable {
         long rowInserted = mDb.insert(FavoritesDBContract.FavoritesEntry.TABLE_NAME, null, cv);
         return (rowInserted!=0);
     }
+    */
 
-    public  boolean deleteFromDB(SQLiteDatabase mDb) {
+    public boolean AddToDB(ContentResolver res) {
+        ContentValues cv = new ContentValues();
+        cv.put(FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID, getId());
+        cv.put(FavoritesDBContract.FavoritesEntry.COLUMN_POSTER_PATH, getPoster_path());
+        Uri uri = res.insert(FavoritesDBContract.CONTENT_URI,cv);
+        //to insert directly on db -> long rowInserted = mDb.insert(FavoritesDBContract.FavoritesEntry.TABLE_NAME, null, cv);
+        return (uri!=null);
+    }
+
+    public  boolean deleteFromDB(ContentResolver res) {
         String sMovieId=Integer.toString(getId());
-        int rowsaffected= mDb.delete(FavoritesDBContract.FavoritesEntry.TABLE_NAME, FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID+"="+sMovieId,null);
+        int rowsaffected= res.delete(FavoritesDBContract.CONTENT_URI, FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID+"="+sMovieId,null);
+        //int rowsaffected= mDb.delete(FavoritesDBContract.FavoritesEntry.TABLE_NAME, FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID+"="+sMovieId,null);
         return (rowsaffected!=0);
     }
 }

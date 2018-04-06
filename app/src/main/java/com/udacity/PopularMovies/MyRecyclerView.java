@@ -77,8 +77,9 @@ public class MyRecyclerView extends RecyclerView {
     @Override
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(SAVED_SUPER_STATE, super.onSaveInstanceState());
+        bundle.putParcelable(SAVED_SUPER_STATE   , super.onSaveInstanceState());
         bundle.putParcelable(SAVED_LAYOUT_MANAGER, this.getLayoutManager().onSaveInstanceState());
+        mLayoutManagerSavedState = bundle.getParcelable(SAVED_LAYOUT_MANAGER);
         return bundle;
     }
 
@@ -86,7 +87,6 @@ public class MyRecyclerView extends RecyclerView {
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            mLayoutManagerSavedState = bundle.getParcelable(SAVED_LAYOUT_MANAGER);
             state = bundle.getParcelable(SAVED_SUPER_STATE);
         }
         super.onRestoreInstanceState(state);
@@ -97,12 +97,12 @@ public class MyRecyclerView extends RecyclerView {
      * <p>
      * <b>NOTE:</b> Must be called after adapter has been set.
      */
-    protected void restorePosition() {
+    public void restorePosition() {
         if (mLayoutManagerSavedState != null) {
             this.getLayoutManager().onRestoreInstanceState(mLayoutManagerSavedState);
-            mLayoutManagerSavedState = null;
         }
     }
+
 
     @Override
     public void setAdapter(Adapter adapter) {

@@ -1,9 +1,10 @@
 package com.udacity.PopularMovies;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -26,7 +27,6 @@ import com.udacity.PopularMovies.adapters.TrailersAdapter;
 import com.udacity.PopularMovies.data.FavoritesDBContract;
 import com.udacity.PopularMovies.data.FavoritesDBContract.FavoritesEntry;
 
-import com.udacity.PopularMovies.data.FavoritesDBHelper;
 import com.udacity.PopularMovies.model.MovieInfo;
 import com.udacity.PopularMovies.model.MovieItem;
 import com.udacity.PopularMovies.model.ReviewItem;
@@ -55,15 +55,18 @@ public class MovieDetailActivity extends AppCompatActivity
     @BindView(R.id.overview_tv)       TextView     m_overview;
     @BindView(R.id.voter_average)     RatingBar    m_voterAverage;
     @BindView(R.id.addFavBtn)         ImageButton  mFavBtn;
-    @BindView(R.id.reviews_rv)        RecyclerView mReviewsRecyclerView;
-    @BindView(R.id.trailers_rv)       RecyclerView mTrailersRecyclerView;
+    @BindView(R.id.reviews_rv)        MyRecyclerView mReviewsRecyclerView;
+    @BindView(R.id.trailers_rv)       MyRecyclerView mTrailersRecyclerView;
     @BindView(R.id.trailers_title_tv) TextView     mTrailersTitleRv;
     @BindView(R.id.reviews_title_tv)  TextView     mReviewsTitleRv;
     @BindView(R.id.mainScrollView)    ScrollView   mScrollView;
 
     private ReviewsAdapter  mReviewsAdapter;
     private TrailersAdapter mTrailersAdapter;
-    private SQLiteDatabase  mDb;
+    //private SQLiteDatabase  mDb;
+
+    private Parcelable mRecyclerViewState;
+    private Parcelable mRecyclerViewState2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +74,8 @@ public class MovieDetailActivity extends AppCompatActivity
         setContentView(R.layout.movies_detail);
         ButterKnife.bind(this);
 
-        FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
-        mDb = dbHelper.getWritableDatabase();
+        //FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
+        //mDb = dbHelper.getWritableDatabase();
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
@@ -93,15 +96,13 @@ public class MovieDetailActivity extends AppCompatActivity
                     Toast.makeText(this, thisMovie.getOriginal_title(), Toast.LENGTH_SHORT).show();
 
                 mMovieId = Integer.toString(thisMovie.getId());
-                Cursor favQry = mDb.query(
-                        FavoritesDBContract.FavoritesEntry.TABLE_NAME,
-                        null,
-                        FavoritesEntry.COLUMN_MOVIE_ID + "=?",
-                        new String[]{mMovieId},
-                        null,
-                        null,
-                        null
-                );
+                Cursor favQry = getContentResolver().query(
+                                                    FavoritesDBContract.CONTENT_URI,
+                                                    null,
+                                                    FavoritesEntry.COLUMN_MOVIE_ID + "=?",
+                                                    new String[]{mMovieId},
+                                                    null
+                                                    );
                 setFavoritesOn(favQry.getCount() != 0);
                 favQry.close();
             }
@@ -109,13 +110,6 @@ public class MovieDetailActivity extends AppCompatActivity
             getSupportLoaderManager().initLoader(MOVIEDB_DETAIL_LOADER_ID,null ,this);
         }
 
-        //ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
-        mScrollView.post(new Runnable() {
-            public void run() {
-                //ScrollView sv = (ScrollView)findViewById(R.id.mainScrollView);
-                mScrollView.fullScroll(ScrollView.FOCUS_UP);
-            }
-        });
     }
 
     private void showMovie(MovieItem thisMovie) {
@@ -137,16 +131,43 @@ public class MovieDetailActivity extends AppCompatActivity
         return true;
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putIntArray("SCROLL_POSITION",  new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
+        //Note that we don't need to save recyclerview's instance state here because it does internally
+        //since MyRecyclerView is derived from RecyclerView and implements onSaveInstaceState and onRestoreInstanceState
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        final int[] position = savedInstanceState.getIntArray("SCROLL_POSITION");
+        if(position != null)
+            mScrollView.post(new Runnable() {
+                public void run() {
+                    mScrollView.scrollTo(position[0], position[1]);
+                }
+            });
+    }
+
     @OnClick(R.id.addFavBtn)
     public void addFavClick(View v) {
         int drawableResourceId=0;
         if (mFavBtn.getTag()!=null) drawableResourceId = (int) mFavBtn.getTag();
+        ContentResolver cr=getContentResolver();
 
-        if ((mMovie!=null) && (mDb!=null)) {
+        if ((mMovie!=null) && (cr!=null)) {
             if (drawableResourceId == 1) {
-                if (mMovie.deleteFromDB(mDb)) setFavoritesOn(false);
+                if (mMovie.deleteFromDB(cr)) setFavoritesOn(false);
             } else {
-                if (!mMovie.ExistInDB(mDb) && mMovie.AddToDB(mDb)) setFavoritesOn(true);
+                if (!mMovie.ExistInDB(cr) && mMovie.AddToDB(cr)) setFavoritesOn(true);
             }
         }
 
@@ -167,11 +188,13 @@ public class MovieDetailActivity extends AppCompatActivity
                 try {
 
                     URL movieDBURL;
+
                     //loading reviews
                     String jsonMovieDBResponse;//="";
                     movieDBURL = JsonUtils.buildUrl(mMovieId+"/reviews");
                     jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(movieDBURL);
                     ReviewItem[]  jsonReviews  = JsonUtils.parseReviewsJson(jsonMovieDBResponse);
+
                     //loading trailers
                     movieDBURL = JsonUtils.buildUrl(mMovieId+"/videos");
                     jsonMovieDBResponse = JsonUtils.getResponseFromHttpUrl(movieDBURL);

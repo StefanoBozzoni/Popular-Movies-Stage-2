@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -30,7 +27,6 @@ import android.widget.Toast;
 
 import com.udacity.PopularMovies.adapters.MoviesAdapter;
 import com.udacity.PopularMovies.data.FavoritesDBContract;
-import com.udacity.PopularMovies.data.FavoritesDBHelper;
 import com.udacity.PopularMovies.model.MovieItem;
 import com.udacity.PopularMovies.utils.JsonUtils;
 import com.udacity.PopularMovies.utils.SingleToast;
@@ -40,7 +36,6 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-//prova
 public class MainActivity extends AppCompatActivity
          implements MoviesAdapter.PopularMovieAdapterOnClickHandler,
                     LoaderManager.LoaderCallbacks<MovieItem[]> {
@@ -63,14 +58,15 @@ public class MainActivity extends AppCompatActivity
     private Menu mMenu;
     private boolean appIsLaunched;
     private Toolbar mTopToolbar;
-    private SQLiteDatabase mDb;
+    //private SQLiteDatabase mDb;
     private MenuItem mSelectedMenuItem;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mRecyclerViewState=myRecyclerView.onSaveInstanceState();
-        outState.putParcelable(RECYCLER_VIEW_STATE,mRecyclerViewState);
+        //Note that MyRecyclerView state doesn't have to be saved here since
+        //it does automatically in MyRecyclerView.onSaveInstanceState
+        //and also it restores automatically on MyRecyclerView.onRestoreInstanceState
     }
 
 
@@ -84,8 +80,8 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
 
-        if (savedInstanceState!=null)
-           mRecyclerViewState=savedInstanceState.getParcelable(RECYCLER_VIEW_STATE);
+        //if (savedInstanceState!=null)
+        //   mRecyclerViewState=savedInstanceState.getParcelable(RECYCLER_VIEW_STATE);
         setContentView(R.layout.activity_main);
 
         //mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -115,8 +111,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Create a DB helper (this will create the DB if run for the first time)
-        FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
-        mDb = dbHelper.getWritableDatabase();
+        //FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
+        //mDb = dbHelper.getWritableDatabase();
 
         LoaderManager loaderManager = getSupportLoaderManager();
         loaderManager.initLoader(MOVIEDB_SEARCH_LOADER_ID, queryBundle, MainActivity.this);
@@ -133,7 +129,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private MovieItem[] loadFavoritesFromCursor() {
-        Cursor favQry = mDb.query(
+
+        Cursor favQry =getContentResolver().query(
+                                            FavoritesDBContract.CONTENT_URI,
+                                            null,
+                                            null,
+                                            null,
+                                            FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID
+                                            );
+
+        /* to query directly from DB
+        Cursor favQry = \.query(
                 FavoritesDBContract.FavoritesEntry.TABLE_NAME,
                 null,
                 null,
@@ -141,6 +147,7 @@ public class MainActivity extends AppCompatActivity
                 null,
                 null,
                 FavoritesDBContract.FavoritesEntry.COLUMN_MOVIE_ID);
+       */
 
         MovieItem[] resMovies = new MovieItem[favQry.getCount()];
         favQry.moveToFirst();
