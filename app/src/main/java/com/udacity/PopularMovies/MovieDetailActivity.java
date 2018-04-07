@@ -67,6 +67,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
     private Parcelable mRecyclerViewState;
     private Parcelable mRecyclerViewState2;
+    private boolean mOnlyFirstShow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
         //FavoritesDBHelper dbHelper = new FavoritesDBHelper(this);
         //mDb = dbHelper.getWritableDatabase();
+        if (savedInstanceState==null)  mOnlyFirstShow=true; else mOnlyFirstShow=false;
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
@@ -92,9 +94,6 @@ public class MovieDetailActivity extends AppCompatActivity
 
             MovieItem thisMovie =  (MovieItem) intent.getExtras().get(MOVIE_OBJ_EXTRA);
             if (thisMovie!=null) {
-                if (thisMovie.getOriginal_title() != null)
-                    Toast.makeText(this, thisMovie.getOriginal_title(), Toast.LENGTH_SHORT).show();
-
                 mMovieId = Integer.toString(thisMovie.getId());
                 Cursor favQry = getContentResolver().query(
                                                     FavoritesDBContract.CONTENT_URI,
@@ -112,6 +111,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
     }
 
+
     private void showMovie(MovieItem thisMovie) {
         String url = JsonUtils.POSTER_BASE_URL +JsonUtils.W500+thisMovie.getBackdrop_path();   //   moviesData[position]
         Picasso.with(this).load(url).error(R.drawable.ic_error).into(m_bckDropImg);
@@ -122,6 +122,10 @@ public class MovieDetailActivity extends AppCompatActivity
         m_voteAverage.setText(String.format("%s%s", String.valueOf(thisMovie.getVote_average()), getString(R.string.max_vote)));
         m_overview.setText(thisMovie.getOverview());
         m_voterAverage.setRating(thisMovie.getVote_average());
+        if ((thisMovie.getOriginal_title() != null) && (mOnlyFirstShow==true)){
+            Toast.makeText(this, thisMovie.getOriginal_title(), Toast.LENGTH_SHORT).show();
+            mOnlyFirstShow=false;
+        }
     }
 
     @Override
@@ -179,7 +183,7 @@ public class MovieDetailActivity extends AppCompatActivity
         return new AsyncTaskLoader<MovieInfo>(this) {
             @Override
             protected void onStartLoading() {
-                forceLoad();
+                   forceLoad();
             }
 
             @Nullable
@@ -211,6 +215,7 @@ public class MovieDetailActivity extends AppCompatActivity
                     e.printStackTrace();
                     return null;
                 }
+
 
             }
         };
@@ -247,6 +252,8 @@ public class MovieDetailActivity extends AppCompatActivity
                 mMovie=movieInfo.getMovie();
                 showMovie(mMovie);
             }
+
+
         }
     }
 
