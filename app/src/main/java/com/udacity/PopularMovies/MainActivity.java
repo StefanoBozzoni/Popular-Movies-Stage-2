@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra(MovieDetailActivity.MOVIE_OBJ_EXTRA,aMovie);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Toast.makeText(this, "prova della mainstream", Toast.LENGTH_SHORT).show();
         //String transitionName=getString(R.string.transition_string);
         //ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(this,viewStart,transitionName);
         //ActivityCompat.startActivity(this,intent,options.toBundle());
